@@ -11,11 +11,7 @@ import tj.abad.srws.config.AppProperties;
 import tj.abad.srws.config.SpringApplicationContext;
 
 @SpringBootApplication
-public class SpringRestfullWebServiceApplication extends SpringBootServletInitializer {
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
-        return super.configure(builder);
-    }
+public class SpringRestfullWebServiceApplication{
 
     public static void main(String[] args) {
         SpringApplication.run(SpringRestfullWebServiceApplication.class, args);

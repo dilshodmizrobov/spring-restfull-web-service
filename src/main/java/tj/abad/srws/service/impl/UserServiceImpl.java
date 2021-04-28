@@ -42,17 +42,20 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findByEmail(newUser.getEmail()).isPresent())
             throw new UserServiceException("Record already exists");
 
-        var userEntity = new UserEntity();
-        BeanUtils.copyProperties(newUser, userEntity);
+        for (int i = 0; i < newUser.getAddresses().size(); i++) {
+            var address = newUser.getAddresses().get(i);
+            address.setUserDetails(newUser);
+            address.setAddressId(utils.generateAddressId(30));
+            newUser.getAddresses().set(i, address);
+        }
+
+        var userEntity = new ModelMapper().map(newUser, UserEntity.class);
         userEntity.setEncryptedPassword(passwordEncoder.encode(newUser.getPassword()));
         userEntity.setUserId(utils.generateUserId(30));
 
         var storedUserDetails = userRepository.save(userEntity);
 
-        var userDto = new UserDto();
-        BeanUtils.copyProperties(storedUserDetails, userDto);
-
-        return userDto;
+        return new ModelMapper().map(storedUserDetails, UserDto.class);
 
     }
 
@@ -109,7 +112,7 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> getUsers(int page, int limit) {
         List<UserDto> returnValue = new ArrayList<>();
 
-        if(page>0) page = page-1;
+        if (page > 0) page = page - 1;
 
         Pageable pageableRequest = PageRequest.of(page, limit);
 

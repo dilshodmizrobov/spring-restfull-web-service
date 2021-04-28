@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -20,6 +22,6 @@ public class UserDto implements Serializable {
     private String encryptedPassword;
     private String emailVerificationToken;
     private final Boolean emailVerificationStatus = false;
-//    private List<AddressDTO> addresses;
+    private List<AddressDTO> addresses;
 
 }
