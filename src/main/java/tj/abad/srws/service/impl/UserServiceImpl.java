@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto create(UserDto newUser) {
-        if (userRepository.findByEmail(newUser.getEmail()).isPresent())
+        if (userRepository.findByEmail(newUser.getEmail())!=null)
             throw new UserServiceException("Record already exists");
 
         for (int i = 0; i < newUser.getAddresses().size(); i++) {
@@ -61,7 +61,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(String userId, UserDto user) {
-        UserDto returnValue = new UserDto();
 
         UserEntity userEntity = userRepository.findByUserId(userId);
 
@@ -72,9 +71,8 @@ public class UserServiceImpl implements UserService {
         userEntity.setLastName(user.getLastName());
 
         UserEntity updatedUserDetails = userRepository.save(userEntity);
-        returnValue = new ModelMapper().map(updatedUserDetails, UserDto.class);
 
-        return returnValue;
+        return new ModelMapper().map(updatedUserDetails, UserDto.class);
     }
 
     @Transactional
@@ -90,8 +88,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+
     public UserDto getUser(String email) {
-        var userEntity = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not fount"));
+        var userEntity = userRepository.findByEmail(email);
+
+        if (userEntity == null) {
+           throw new UsernameNotFoundException("User not fount");
+        }
+
         UserDto returnValue = new UserDto();
         BeanUtils.copyProperties(userEntity, returnValue);
         return returnValue;
@@ -130,7 +134,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String userName) {
-        var user = userRepository.findByEmail(userName).orElseThrow(() -> new UsernameNotFoundException("User not fount"));
+        var user = userRepository.findByEmail(userName);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not fount");
+        }
         return new User(user.getEmail(), user.getEncryptedPassword(), new ArrayList<>());
     }
 }

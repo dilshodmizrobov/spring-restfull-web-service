@@ -92,10 +92,8 @@ public class UserController {
 
     @GetMapping(value = "/{userId}", produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public UserRest getUserById(@PathVariable String userId) {
-        var userRest = new UserRest();
         var userDto = userService.findUserByUserId(userId);
-        BeanUtils.copyProperties(userDto, userRest);
-        return userRest;
+        return new ModelMapper().map(userDto,UserRest.class);
     }
 
     // http://localhost:8080/mobile-app-ws/users/jfhdjeufhdhdj/addressses
